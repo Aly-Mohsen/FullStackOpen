@@ -1,5 +1,9 @@
 import { useState } from 'react'
 
+
+const Button = ({ handleClick, text }) => (
+  <button onClick={handleClick}>{text}</button>
+)
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -11,20 +15,42 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-   
+
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+
+  const mostVotes = Math.max(...votes)
+  const mostVotedIndex = votes.indexOf(mostVotes)
+
+
 
   const handleNext = () => {
     let randomIndex
-    do{ randomIndex = Math.floor(Math.random() * anecdotes.length)}
-    while(randomIndex === selected)  // Remove consecutive repeat of anecdote
+    do { randomIndex = Math.floor(Math.random() * anecdotes.length) }
+    while (randomIndex === selected)  // Remove consecutive repeat of anecdote
     setSelected(randomIndex)
+  }
+
+  const handleVote = () => {
+    const newVotes = [...votes]
+    newVotes[selected] += 1
+    setVotes(newVotes)
   }
   return (
     <div>
       <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
-      <button onClick={handleNext}>next anecdote</button>
+      <p>has {votes[selected]} votes</p>
+      <Button handleClick={handleVote} text="vote" />
+      <Button handleClick={handleNext} text="next anecdote" />
+
+      {mostVotes > 0 && (
+        <>
+          <h1>Anecdote with most votes</h1>
+          <p>{anecdotes[mostVotedIndex]}</p>
+          <p>has {mostVotes} votes</p>
+        </>
+      )}
     </div>
   )
 }
